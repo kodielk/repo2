@@ -1,0 +1,9 @@
+float $size = 3;
+float $percentage = 0.85;
+polySphere -r $size -sx 20 -sy 20 -ax 0 1 0 -cuv 2 -ch 1;
+move -r -os -wd 0 $size 0;
+
+polySphere -r ($size-1) -sx 20 -sy 20 -ax 0 1 0 -cuv 2 -ch 1;
+move -r -os -wd 0 ($percentage*(($size*2)+($size-1))) 0;
+polySphere -r ($size-2) -sx 20 -sy 20 -ax 0 1 0 -cuv 2 -ch 1;
+move -r -os -wd 0 ($percentage*(($size*2)+(($size-1)*2) + ($size -2))) 0;
