@@ -1,0 +1,17 @@
+global proc generateSpiralStaircase(int $num_stairs, float $stair_length, float $stair_width, float $stair_height, float $pivot_offset, float $step_height, float $step_rotation) {
+    for ($i = 0; $i < $num_stairs; $i++) {
+        float $x = $pivot_offset * cos(deg_to_rad($i * $step_rotation));
+        float $y = $i * $step_height;
+        float $z = $pivot_offset * sin(deg_to_rad($i * $step_rotation));
+
+        string $step[] = `polyCube -w $stair_length -h $stair_height -d $stair_width`;
+        
+        move $x $y $z $step[0];
+        
+        rotate -r 0 ($i * $step_rotation) 0 $step[0];
+        
+        print ("Step " + ($i+1) + ": Position (" + $x + ", " + $y + ", " + $z + ") | Rotation " + ($i * $step_rotation) + " degrees\n");
+    }
+}
+
+generateSpiralStaircase(20, 8, 3, 0.5, -6, 4, 30);
