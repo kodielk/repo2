@@ -1,0 +1,138 @@
+global proc float calculator(float $input[], string $operation) {
+    float $result;
+    string $operationStr;
+
+    // Determine which operation to perform
+    if ($operation == "add") {
+        $result = sum($input);
+        $operationStr = " + ";
+    } else if ($operation == "subtract") {
+        $result = difference($input);
+        $operationStr = " - ";
+    } else if ($operation == "multiply") {
+        $result = multiply($input);
+        $operationStr = " * ";
+    } else if ($operation == "divide") {
+        $result = divide($input);
+        $operationStr = " / ";
+    } else if ($operation == "mean") {
+        $result = mean($input);
+        print ("The mean of " + formatInput($input) + " is " + $result + "\n");
+        return $result;
+    } else if ($operation == "median") {
+        $result = median($input);
+        print ("The median of " + formatInput($input) + " is " + $result + "\n");
+        return $result;
+    } else {
+        print("Error: Unsupported operation.\n");
+        return 0;
+    }
+
+    // Print the input, operation, and result
+    string $inputStr = formatInput($input);
+    print ($inputStr + $operationStr + $result + " = " + $result + "\n");
+
+    return $result;
+}
+
+// Helper function to format the input array as a string
+global proc string formatInput(float $input[]) {
+    string $inputStr = "";
+    for ($i = 0; $i < size($input); $i++) {
+        $inputStr += ("" + $input[$i]);  // Convert float to string
+        if ($i < size($input) - 1) {
+            $inputStr += ", ";
+        }
+    }
+    return $inputStr;
+}
+
+// Define the sum function
+global proc float sum(float $input[]) {
+    float $total = 0;
+    for ($i = 0; $i < size($input); $i++) {
+        $total += $input[$i];
+    }
+    return $total;
+}
+
+// Define the subtract function
+global proc float difference(float $input[]) {
+    float $total = $input[0];
+    for ($i = 1; $i < size($input); $i++) {
+        $total -= $input[$i];
+    }
+    return $total;
+}
+
+// Define the multiply function
+global proc float multiply(float $input[]) {
+    float $total = 1;
+    for ($i = 0; $i < size($input); $i++) {
+        $total *= $input[$i];
+    }
+    return $total;
+}
+
+// Define the divide function
+global proc float divide(float $input[]) {
+    float $total = $input[0];
+    for ($i = 1; $i < size($input); $i++) {
+        if ($input[$i] == 0) {
+            print("Error: Division by zero.\n");
+            return 0;
+        }
+        $total /= $input[$i];
+    }
+    return $total;
+}
+
+// Define the mean function
+global proc float mean(float $input[]) {
+    float $total = sum($input);
+    return $total / size($input);
+}
+
+// Define the median function
+global proc float median(float $input[]) {
+    float $sorted[] = sort($input);
+    int $len = size($sorted);
+    
+    if ($len % 2 == 0) {
+        // Average the two middle values
+        return ($sorted[$len/2 - 1] + $sorted[$len/2]) / 2;
+    } else {
+        // Return the middle value
+        return $sorted[floor($len / 2)];
+    }
+}
+
+// Helper function to sort an array
+global proc float[] sort(float $input[]) {
+    float $sorted[] = $input;
+    int $len = size($input);
+    
+    for ($i = 0; $i < $len; $i++) {
+        for ($j = $i + 1; $j < $len; $j++) {
+            if ($sorted[$i] > $sorted[$j]) {
+                float $temp = $sorted[$i];
+                $sorted[$i] = $sorted[$j];
+                $sorted[$j] = $temp;
+            }
+        }
+    }
+    return $sorted;
+}
+
+// Test the calculator function
+global proc testCalculator() {
+    float $values[] = {10.0, 20.0, 30.0};
+
+    // Test various operations
+    calculator($values, "add");
+    calculator($values, "subtract");
+    calculator($values, "multiply");
+    calculator($values, "divide");
+    calculator($values, "mean");
+    calculator($values, "median");
+}
