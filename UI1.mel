@@ -1,0 +1,56 @@
+global proc Add() {
+    // Use the stored field names directly
+    string $field1 = "firstField";
+    string $field2 = "secondField";
+    string $field3 = "thirdField";
+    string $field4 = "myTextField";
+    
+    // Get the values from the floatFields
+    float $value1 = `floatField -q -value $field1`;
+    float $value2 = `floatField -q -value $field2`;
+    
+    // Calculate the sum
+    float $sum = $value1 + $value2;
+    
+    // Update the third field with the result
+    floatField -e -value $sum $field3;
+    
+    // Update the text field with a descriptive string
+    textField -e -text ("The sum of " + $value1 + " and " + $value2 + " is " + $sum + ".") $field4;
+}
+
+global proc WhatsInFloatField() {
+    // Reference the first field and print its value
+    string $field1 = "firstField";
+    print ($field1 + "\n");
+    print (`floatField -q -value $field1`);
+}
+
+// Define window and layout
+string $mWindow = "test_ui";
+
+if (`window -exists $mWindow`)
+    deleteUI $mWindow;
+
+$mWindow = `window -height 300
+    -title "Super Cool Window"
+    -sizeable 1
+    -width 400`;
+
+string $mColumn = `columnLayout -adjustableColumn 1 -parent $mWindow`;
+
+// Button to print "Hello World"
+button -parent $mColumn -label "Say Hello!" -command "print (\"Hello World!\");";
+
+// Create float fields and a text field for input/output
+floatField -parent $mColumn -value 0 -step 0.1 -precision 2 "firstField";
+floatField -parent $mColumn -value 0 -step 0.1 -precision 2 "secondField";
+floatField -parent $mColumn -value 0 -step 0.1 -precision 2 -editable 0 "thirdField";
+textField -parent $mColumn -text "" -editable 0 "myTextField";
+
+// Buttons to call the procedures
+button -parent $mColumn -label "Print Field Value" -command "WhatsInFloatField";
+button -parent $mColumn -label "Add Numbers" -command "Add";
+
+// Show the window
+showWindow $mWindow;

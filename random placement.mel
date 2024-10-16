@@ -1,0 +1,68 @@
+// Function to duplicate selected objects and randomize their placement
+global proc DuplicateAndRandomize(float $minX, float $maxX, float $minY, float $maxY, float $minZ, float $maxZ, int $numDuplicates) {
+    string $selection[] = `ls -sl`;  // Get selected objects
+    
+    if (size($selection) == 0) {
+        warning("No objects selected. Please select objects to duplicate.");
+        return;
+    }
+    
+    for ($obj in $selection) {
+        for ($i = 0; $i < $numDuplicates; $i++) {
+            string $newObjArray[] = `duplicate $obj`;  // Duplicate object returns a list
+            string $newObj = $newObjArray[0];  // Extract the duplicated object name
+            
+            // Generate random values for each axis within the specified ranges
+            float $randomX = rand($minX, $maxX);
+            float $randomY = rand($minY, $maxY);
+            float $randomZ = rand($minZ, $maxZ);
+            
+            // Move the duplicated object to the random position
+            move $randomX $randomY $randomZ $newObj;
+        }
+    }
+}
+
+// Function to create the UI for user input
+global proc CreateRandomizerUI() {
+    string $window = "randomizerWindow";
+    
+    if (`window -exists $window`) {
+        deleteUI $window;
+    }
+    
+    // Create window
+    $window = `window -title "Duplicate and Randomize" -widthHeight 300 200`;  // Added missing semicolon
+    
+    // Create layout
+    columnLayout -adjustableColumn true;
+    
+    // Input fields for the number of duplicates and the random ranges for each axis
+    intFieldGrp -label "Number of Duplicates" -value1 5 "numDuplicatesField";
+    floatFieldGrp -numberOfFields 2 -label "X Range" -value1 -10.0 -value2 10.0 "xRangeField";
+    floatFieldGrp -numberOfFields 2 -label "Y Range" -value1 -10.0 -value2 10.0 "yRangeField";
+    floatFieldGrp -numberOfFields 2 -label "Z Range" -value1 -10.0 -value2 10.0 "zRangeField";
+    
+    // Add button to trigger the duplication and randomization function
+    button -label "Duplicate and Randomize" -command "ExecuteRandomizer";
+    
+    showWindow $window;
+}
+
+// Function to gather user inputs and call the duplication function
+global proc ExecuteRandomizer() {
+    // Get values from the UI fields
+    int $numDuplicates = `intFieldGrp -q -value1 numDuplicatesField`;
+    float $minX = `floatFieldGrp -q -value1 xRangeField`;
+    float $maxX = `floatFieldGrp -q -value2 xRangeField`;
+    float $minY = `floatFieldGrp -q -value1 yRangeField`;
+    float $maxY = `floatFieldGrp -q -value2 yRangeField`;
+    float $minZ = `floatFieldGrp -q -value1 zRangeField`;
+    float $maxZ = `floatFieldGrp -q -value2 zRangeField`;
+    
+    // Call the duplication and randomization function
+    DuplicateAndRandomize($minX, $maxX, $minY, $maxY, $minZ, $maxZ, $numDuplicates);
+}
+
+// Create the UI when the script is run
+CreateRandomizerUI();
