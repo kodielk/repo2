@@ -1,0 +1,59 @@
+global proc calculate() {
+    string $field1 = "inputField1";
+    string $field2 = "inputField2";
+    string $operationField = "operationField";
+    string $resultField = "resultField";
+    string $outputTextField = "outputTextField";
+
+    float $value1 = `floatField -q -value $field1`;
+    float $value2 = `floatField -q -value $field2`;
+    string $operation = `optionMenu -q -value $operationField`;
+    float $result;
+
+    if ($operation == "sum") {
+        $result = $value1 + $value2;
+    } else if ($operation == "difference") {
+        $result = $value1 - $value2;
+    } else if ($operation == "product") {
+        $result = $value1 * $value2;
+    } else if ($operation == "division") {
+        if ($value2 != 0) {
+            $result = $value1 / $value2;
+        } else {
+            error("Cannot divide by zero.");
+            return;
+        }
+    }
+
+    floatField -e -value $result $resultField;
+    textField -e -text ("The result of " + $value1 + " and " + $value2 + " with operation " + $operation + " is " + $result + ".") $outputTextField;
+}
+
+global proc showCalculatorUI() {
+    string $window = "calcWindow";
+    if (`window -exists $window`) {
+        deleteUI $window;
+    }
+
+    $window = `window -title "Calculator" -widthHeight 400 300`;
+
+    columnLayout -adjustableColumn 1;
+
+    floatField -value 0 -step 0.1 -precision 2 "inputField1";
+    floatField -value 0 -step 0.1 -precision 2 "inputField2";
+
+    optionMenu "operationField";
+    menuItem -label "summy";
+    menuItem -label "difference";
+    menuItem -label "product";
+    menuItem -label "division";
+
+    floatField -value 0 -step 0.1 -precision 2 -editable 0 "resultField";
+    textField -text "" -editable 0 "outputTextField";
+
+    button -label "Calculate" -command "calculate";
+
+    showWindow $window;
+}
+
+showCalculatorUI();
